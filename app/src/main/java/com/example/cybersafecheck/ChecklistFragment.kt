@@ -8,11 +8,14 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cybersafecheck.data.AssessmentEntity
 import com.example.cybersafecheck.data.CyberSafeDatabase
 import com.example.cybersafecheck.data.RiskAnswerEntity
 import com.example.cybersafecheck.data.RiskRepository
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 class ChecklistFragment : Fragment(R.layout.fragment_checklist) {
@@ -33,13 +36,80 @@ class ChecklistFragment : Fragment(R.layout.fragment_checklist) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        // Load from Room (on a background thread inside the repository)
         viewLifecycleOwner.lifecycleScope.launch {
             repository.seedIfEmpty()
             answers.clear()
             answers.addAll(repository.getAll())
             adapter.notifyDataSetChanged()
         }
+
+        // Listens for "Save to History" from ScoreDialogFragment
+        parentFragmentManager.setFragmentResultListener(
+            ScoreDialogFragment.RESULT_KEY, viewLifecycleOwner
+        ) { _, bundle ->
+            val flagged = bundle.getInt(ScoreDialogFragment.RESULT_FLAGGED)
+            val total = bundle.getInt(ScoreDialogFragment.RESULT_TOTAL)
+            saveAssessment(flagged, total)
+        }
+
+        view.findViewById<View>(R.id.btn_calculate_score).setOnClickListener {
+            showScoreDialog()
+        }
+
+        view.findViewById<View>(R.id.btn_view_history).setOnClickListener {
+            findNavController().navigate(R.id.action_checklist_to_history)
+        }
+
+        view.findViewById<View>(R.id.btn_reset).setOnClickListener {
+            showResetConfirmation()
+        }
+    }
+
+    private fun showScoreDialog() {
+        val flagged = answers.count { it.isFlagged }
+        val total = answers.size
+
+        val breakdown = answers
+            .groupBy { it.category }
+            .entries
+            .joinToString("\n") { (category, items) ->
+                val flaggedInCategory = items.count { it.isFlagged }
+                val label =
+                    category.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+                "$label: $flaggedInCategory/${items.size} flagged"
+            }
+
+        ScoreDialogFragment.newInstance(flagged, total, breakdown)
+            .show(parentFragmentManager, "score_dialog")
+    }
+
+    private fun saveAssessment(flagged: Int, total: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val dao = CyberSafeDatabase.getInstance(requireContext()).assessmentDao()
+            dao.insert(
+                AssessmentEntity(
+                    timestamp = System.currentTimeMillis(),
+                    flaggedCount = flagged,
+                    totalCount = total
+                )
+            )
+        }
+    }
+
+    private fun showResetConfirmation() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Reset Checklist")
+            .setMessage("This clears every answer back to OFF. This can't be undone.")
+            .setPositiveButton("Reset") { _, _ ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repository.resetAll()
+                    answers.clear()
+                    answers.addAll(repository.getAll())
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private inner class RiskHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -56,7 +126,6 @@ class ChecklistFragment : Fragment(R.layout.fragment_checklist) {
             riskSwitch.setOnCheckedChangeListener { _, isChecked ->
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    // Update the local copy, then write to Room
                     answers[position] = answers[position].copy(isFlagged = isChecked)
                     val id = answers[position].itemId
                     viewLifecycleOwner.lifecycleScope.launch {
@@ -65,17 +134,12 @@ class ChecklistFragment : Fragment(R.layout.fragment_checklist) {
                 }
             }
 
-            // Only the question text opens the detail screen, not the switch
             questionText.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.fragment_container,
-                            RiskDetailFragment.newInstance(answers[position].itemId)
-                        )
-                        .addToBackStack(null)
-                        .commit()
+                    val action = ChecklistFragmentDirections
+                        .actionChecklistToDetail(answers[position].itemId)
+                    findNavController().navigate(action)
                 }
             }
         }
@@ -96,3 +160,6 @@ class ChecklistFragment : Fragment(R.layout.fragment_checklist) {
         override fun getItemCount() = answers.size
     }
 }
+
+//Author: Mangesana E
+//Student number: 2030630053

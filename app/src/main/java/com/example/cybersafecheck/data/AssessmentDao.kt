@@ -13,3 +13,6 @@ interface AssessmentDao {
     @Query("SELECT * FROM assessments ORDER BY timestamp DESC")
     suspend fun getAll(): List<AssessmentEntity>
 }
+
+//Author: Mangesana E
+//Student number: 2030630053

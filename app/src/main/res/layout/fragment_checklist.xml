@@ -31,4 +31,39 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <Button
+            android:id="@+id/btn_calculate_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:text="Calculate Score"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btn_view_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:text="History"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="Reset"
+            android:textSize="11sp" />
+    </LinearLayout>
 </LinearLayout>

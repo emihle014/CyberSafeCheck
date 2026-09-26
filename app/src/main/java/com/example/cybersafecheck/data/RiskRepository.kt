@@ -35,4 +35,13 @@ class RiskRepository(private val dao: RiskDao) {
     suspend fun setFlagged(itemId: String, flagged: Boolean) = withContext(Dispatchers.IO) {
         dao.updateFlagged(itemId, flagged)
     }
+
+    suspend fun resetAll() = withContext(Dispatchers.IO) {
+        dao.resetAll()
+    }
+
 }
+
+
+//Author: Mangesana E
+//Student number: 2030630053

@@ -10,3 +10,7 @@ data class AssessmentEntity(
     val flaggedCount: Int,
     val totalCount: Int
 )
+
+
+//Author: Mangesana E
+//Student number: 2030630053

@@ -30,3 +30,6 @@ abstract class CyberSafeDatabase : RoomDatabase() {
         }
     }
 }
+
+//Author: Mangesana E
+//Student number: 2030630053

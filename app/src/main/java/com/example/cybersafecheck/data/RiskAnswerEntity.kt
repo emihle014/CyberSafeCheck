@@ -10,3 +10,7 @@ data class RiskAnswerEntity(
     val category: String,
     val isFlagged: Boolean
 )
+
+
+//Author: Mangesana E
+//Student number: 2030630053

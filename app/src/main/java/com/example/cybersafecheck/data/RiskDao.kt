@@ -22,4 +22,11 @@ interface RiskDao {
 
     @Query("SELECT COUNT(*) FROM risk_answers")
     suspend fun count(): Int
+
+    @Query("UPDATE risk_answers SET isFlagged = 0")
+    suspend fun resetAll()
 }
+
+
+//Author: Mangesana E
+//Student number: 2030630053
