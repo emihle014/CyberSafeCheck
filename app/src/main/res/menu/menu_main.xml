@@ -17,4 +17,9 @@
         android:id="@+id/reportFragment"
         android:title="Report"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/passwordCheckFragment"
+        android:title="Password Check"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -29,9 +29,14 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHost.navController
 
-        // The three menu destinations are "top level": no Up arrow on them
+        // The menu destinations are "top level": no Up arrow on them
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.checklistFragment, R.id.historyFragment, R.id.reportFragment)
+            setOf(
+                R.id.checklistFragment,
+                R.id.historyFragment,
+                R.id.reportFragment,
+                R.id.passwordCheckFragment
+            )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
