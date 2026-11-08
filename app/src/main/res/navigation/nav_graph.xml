@@ -37,4 +37,10 @@
         android:label="History"
         tools:layout="@layout/fragment_history" />
 
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="com.example.cybersafecheck.ReportFragment"
+        android:label="Report"
+        tools:layout="@layout/fragment_report" />
+
 </navigation>

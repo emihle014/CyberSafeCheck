@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Item ids intentionally match the destination ids in nav_graph.xml -->
+    <item
+        android:id="@+id/checklistFragment"
+        android:title="Checklist"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/historyFragment"
+        android:title="History"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/reportFragment"
+        android:title="Report"
+        app:showAsAction="ifRoom" />
+</menu>

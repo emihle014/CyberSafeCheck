@@ -2,6 +2,7 @@ package com.example.cybersafecheck
 //Author: Mangesana E
 //Student number: 2030630053
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -25,8 +26,23 @@ class ScoreDialogFragment : DialogFragment() {
                     bundleOf(RESULT_FLAGGED to flagged, RESULT_TOTAL to total)
                 )
             }
+            .setNeutralButton("Share") { _, _ -> shareScore(flagged, total) }
             .setNegativeButton("Close", null)
             .create()
+    }
+
+    // Implicit intent: any app that can handle plain text (Messages, Gmail, WhatsApp...) can respond.
+    // Only the aggregate score is shared, never the individual answers.
+    private fun shareScore(flagged: Int, total: Int) {
+        val summary = "I checked my digital footprint with CyberSafeCheck: " +
+                "$flagged of $total risky habits flagged. How safe are your online habits?"
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "My CyberSafeCheck score")
+            putExtra(Intent.EXTRA_TEXT, summary)
+        }
+        startActivity(Intent.createChooser(sendIntent, "Share my score"))
     }
 
     companion object {
